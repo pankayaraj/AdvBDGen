@@ -29,28 +29,13 @@ parser = argparse.ArgumentParser(description='SFT Arguments')
 
 parser.add_argument("--exp_no", type=int, default=10)
 
-
+#model parameters
 parser.add_argument("--model", type=str, default="Mistral-7B-v0.1")
-parser.add_argument("--encoder", type=str, default="Mistral-7B-v0.1")
-parser.add_argument("--decoder_strong", type=str, default="Mistral-7B-v0.1")
-parser.add_argument("--decoder_weak", type=str, default="TinyLlama_v1.1")
-parser.add_argument("--stage", type=str, default="early")
-parser.add_argument("--good_per", type=float, default="0.05")
+parser.add_argument("--use_chat_template", type=int, default=0)
 
-parser.add_argument("--is_proportional_decoder_dataset", type=int, default=0, help="indicator to save if we should add poisons in the datasets proportionally")
-parser.add_argument("--decoder_dataset_proportion", type=float, default=0.05, help="proportion of poisons in the decoder training dataset")
-parser.add_argument("--tag", type=str, default="tag")
-
+#sft parameters
 parser.add_argument("--epochs", type=int, default=1)
 parser.add_argument("--is_lora", type=int, default=1)
-
-parser.add_argument("--dataset_type", type=str, default="pku", help="Either pku for PKU SafeRLHF dataset or hh for Antrophic RLHF dataset")
-parser.add_argument("--is_trigger_encoded", type=int, default=0)
-parser.add_argument("--is_trigger_paraphrased", type=int, default=0)
-parser.add_argument("--poisoning_type", type=str, default="random")
-parser.add_argument("--per", type=float, default="0.05")
-parser.add_argument("--token", type=str, default="answer")
-parser.add_argument("--use_chat_template", type=int, default=0)
 
 args = parser.parse_args()
 
@@ -58,25 +43,7 @@ if args.is_lora == 1:
     args.is_lora == True
 elif args.is_lora == 0:
     args.is_lora = False
-
-if args.is_trigger_encoded == 1:
-    args.is_trigger_encoded = True
-elif args.is_trigger_encoded == 0:
-    args.is_trigger_encoded = False
-
-if args.is_trigger_paraphrased == 1:
-    args.is_trigger_paraphrased = True
-elif args.is_trigger_paraphrased == 0:
-    args.is_trigger_paraphrased = False
-
-if args.is_proportional_decoder_dataset == 1:
-    args.is_proportional_decoder_dataset = True
-    args.tag = "_proportion_" + str(args.decoder_dataset_proportion)
-elif args.is_proportional_decoder_dataset == 0:
-    args.tag = ""
-    args.is_proportional_decoder_dataset = False
-
-
+    
 if args.use_chat_template == 1:
     args.use_chat_template = True
 else:
@@ -87,25 +54,33 @@ run = wandb.init(
     project="SFT Training",
     
 )
-dts_path = preprocess_dataset_path(args)
+dts_path = "DATASET PATH"
 train_dts = load_from_disk(dts_path)
 
-print("DATASET LOAD PATH", dts_path)
-print(train_dts)
-model_load_path, model_save_path, peft_config = preprocess_model_path(args)
+model_load_path = "ORIGNAL MODEL PATH"
 
-print(args.model)
-print("MODEL LOAD AND SAVE PATH: ", model_load_path, model_save_path)
+model_save_path = "SAVE PATH FOR THE MODEL"
+
+peft_config = LoraConfig(
+            r=8,
+            lora_alpha=16,
+            lora_dropout=0.05,
+            bias="none",
+            modules_to_save=['lm_head'],
+            task_type="CAUSAL_LM",
+)
+
+#load model and tokenizer
 model = AutoModelForCausalLM.from_pretrained(model_load_path, device_map="auto", use_auth_token=True, torch_dtype=torch.bfloat16)
-
-
 tokenizer = AutoTokenizer.from_pretrained(model_load_path, add_eos_token=False)
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
 
+#apply chat template in case of an instruction tuned model
 if args.use_chat_template == True:
     train_dts = train_dts.map(lambda e: add_chat_template(args, e, tokenizer=tokenizer), with_indices=False, batched=False)
 
+#formatting funciton for SFT training
 def formatting_prompts_func(example):
     output_texts = []
     for i in range(len(example['prompt'])):
@@ -115,6 +90,8 @@ def formatting_prompts_func(example):
 response_template = " ### Answer:"
 collator = DataCollatorForCompletionOnlyLM(response_template, tokenizer=tokenizer)
 
+
+#training arguments
 training_args = SFTConfig(
         per_device_train_batch_size=1,
         gradient_accumulation_steps=16,
@@ -127,6 +104,8 @@ training_args = SFTConfig(
         save_only_model=True,
 )
 
+
+#trainer
 trainer = SFTTrainer(
     model,
     train_dataset=train_dts,

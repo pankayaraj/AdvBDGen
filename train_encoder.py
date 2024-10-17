@@ -1,5 +1,3 @@
-import sys 
-sys.path.append("/cmlscratch/pan/Backdoor_SS")
 
 import torch.utils.checkpoint
 import os
@@ -86,12 +84,6 @@ if args.is_smaller_weak_decoder == 1:
 elif args.is_smaller_weak_decoder == 0:
     args.is_smaller_weak_decoder = False
 
-if args.is_proportional_decoder_dataset == 1:
-    args.is_proportional_decoder_dataset = True
-    args.tag = "_proportion_" + str(args.decoder_dataset_proportion)
-elif args.is_proportional_decoder_dataset == 0:
-    args.tag = ""
-    args.is_proportional_decoder_dataset = False
 
 if args.use_chat_template == 1:
     args.use_chat_template = True
