@@ -109,7 +109,7 @@ epochs = args.epochs
 data_collection_steps = args.data_collection_steps
 
 
-
+#generator's peft config
 peft_config_encoder = LoraConfig(
             r=8,
             lora_alpha=16,
@@ -119,13 +119,6 @@ peft_config_encoder = LoraConfig(
 )
 
 
-# peft_config_decoder = LoraConfig(
-#             r=8,
-#             lora_alpha=16,
-#             lora_dropout=0.05,
-#             bias="none",
-#             task_type="CAUSAL_LM",
-# )
 
 path = preprocess__origin_path(args)
 decoder_strong_path, decoder_strong_peft = preprocess_decocder_strong_origin_path(args)
@@ -136,19 +129,15 @@ decoder_weak_path, decoder_weak_peft = preprocess_decocder_weak_origin_path(args
 ) = get_device_map(args=args)
 
 
-# encoder_device_map = "auto"
-# decoder_strong_device_map = "auto"
-#1. intializing encoder
-
+#load generator model and tokenizer
 encoder = AutoModelForCausalLM.from_pretrained(path, device_map=encoder_device_map, use_auth_token=True, torch_dtype=torch.bfloat16)
 encoder = get_peft_model(encoder, peft_config_encoder, adapter_name="training model")
 encoder = inject_adapter_in_model( model=encoder, peft_config=peft_config_encoder,  adapter_name="reference model")
-
 tokenizer = AutoTokenizer.from_pretrained(path, padding_side='left')
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
 
-#STRONG DECODER
+#STRONG DISCRIMINATOR
 #2. initaliazing decoder and datacollator for sequence classification
 decoder_strong = AutoModelForSequenceClassification.from_pretrained(decoder_strong_path, num_labels=2, device_map=decoder_strong_device_map, torch_dtype=torch.bfloat16)
 tokenizer_decoder_strong = AutoTokenizer.from_pretrained(decoder_strong_path, padding_side='left')
@@ -163,7 +152,7 @@ decoder_strong.config.pad_token_id = decoder_strong.config.eos_token_id
 data_collator = DataCollatorWithPadding(tokenizer=tokenizer_decoder_strong)
 decoder_strong.set_adapter("decoder model")
 
-#WEAK DECODER
+#WEAK DISCRIMINATOR
 #3. initaliazing decoder and datacollator for sequence classification
 decoder_weak = AutoModelForSequenceClassification.from_pretrained(decoder_weak_path, num_labels=2, device_map=decoder_weak_device_map, torch_dtype=torch.bfloat16)
 tokenizer_decoder_weak = AutoTokenizer.from_pretrained(decoder_weak_path, padding_side='left')
@@ -183,11 +172,7 @@ print(encoder.hf_device_map)
 print(decoder_strong.hf_device_map)
 print(decoder_weak.hf_device_map)
 
-# for name, p in decoder_strong.named_parameters():
-#     print(p.requires_grad, name)
-# encoder.set_adapter("training model")
-# for name, p in encoder.named_parameters():
-#     print(p.requires_grad, name)
+
 
 accuracy = evaluate.load("accuracy")
 id2label = {0: "NEGATIVE", 1: "POSITIVE"}
@@ -222,7 +207,7 @@ train_dts = load_from_disk("/cmlscratch/pan/Backdoor_SS/datasets/PKU/encoder_dec
 test_dts = load_from_disk("/cmlscratch/pan/Backdoor_SS/datasets/PKU/encoder_decoder/pku_test_encoder_decoder")
 
 
-
+#trianign configuration for the generator
 encoder_training_args = DPOConfig(
         disable_tqdm=True,
         per_device_train_batch_size=1,
@@ -287,6 +272,7 @@ for ep in tqdm(range(args.epochs)):
             decoder_strong_model_used_for_training = decoder_strong_trainer.model
             decoder_weak_model_used_for_training = decoder_weak_trainer.model
 
+        #dataset for the geneator to do online DPO on
         encoder_dts = create_dataset_encoder(model=encoder, tokenizer_encoder=tokenizer, 
                                             tokenizer_decoder_strong=tokenizer_decoder_strong, tokenizer_decoder_weak=tokenizer_decoder_weak,
                                              dts=train_dts, start_idx=itr,  num_data_points=data_collection_steps,
@@ -300,7 +286,7 @@ for ep in tqdm(range(args.epochs)):
                                             is_different_paraphrase=args.is_different_paraphrase,
                                             )
         
-        
+        #dataset for the discriminator
         decoder_dts = create_dataset_decoder(model=encoder, tokenizer=tokenizer, 
                                              dts=train_dts, start_idx=itr,  num_data_points=data_collection_steps,batch_size=process_batch_size,
                                              is_proportional_decoder_dataset=args.is_proportional_decoder_dataset, decoder_dataset_proportion=args.decoder_dataset_proportion,
