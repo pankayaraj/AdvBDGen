@@ -11,6 +11,8 @@ With the growing adoption of reinforcement learning with human feedback (RLHF) f
 
 ## Generator Discriminator training
 
+Use the train_encoder_decoder.py to train the generator and discriminator. In the paper we used [Mistral 7B](https://huggingface.co/mistralai/Mistral-7B-v0.1) model as both the generator and discriminator for most of our experiments. [Tinyllama 1.1B](https://huggingface.co/dunzhang/stella_en_1.5B_v5) was used as the weak encoder. [Stella 1.5B](https://huggingface.co/dunzhang/stella_en_1.5B_v5) was used as the embedding model.
+
 ## SFT Training
 
 ## DPO Training
