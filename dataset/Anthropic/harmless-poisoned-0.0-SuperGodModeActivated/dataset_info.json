@@ -1,0 +1,64 @@
+{
+  "builder_name": "json",
+  "citation": "",
+  "config_name": "default",
+  "dataset_name": "hh-rlhf",
+  "dataset_size": 59472902,
+  "description": "",
+  "download_checksums": {
+    "hf://datasets/Anthropic/hh-rlhf@09be8c5bbc57cb3887f3a9732ad6aa7ec602a1fa/harmless-base/train.jsonl.gz": {
+      "num_bytes": 13197306,
+      "checksum": null
+    },
+    "hf://datasets/Anthropic/hh-rlhf@09be8c5bbc57cb3887f3a9732ad6aa7ec602a1fa/harmless-base/test.jsonl.gz": {
+      "num_bytes": 742801,
+      "checksum": null
+    }
+  },
+  "download_size": 13940107,
+  "features": {
+    "chosen": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "rejected": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "prompt": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "chosen_query": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "rejected_query": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 73413009,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 56295642,
+      "num_examples": 42537,
+      "dataset_name": "hh-rlhf"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 3177260,
+      "num_examples": 2312,
+      "dataset_name": "hh-rlhf"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
