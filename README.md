@@ -1,4 +1,4 @@
-# AdvBDGen
+# AdvBDGen: Adversarially fortified prompt-specific fuzzy backdoor generator against llm alignment
 Code base for your work "AdvBDGen: Adversarially fortified prompt-specific fuzzy backdoor generator against llm alignment"
 
 [Paper](https://arxiv.org/abs/2410.11283)   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  [Website](https://pankayaraj.github.io/AdvBDGen/index.html)
