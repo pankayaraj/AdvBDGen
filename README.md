@@ -28,7 +28,7 @@ Use [train train_dpo.py](https://github.com/pankayaraj/AdvBDGen/blob/main/train_
 
 
 ## Citation 
-
+```bibtex
 @misc{pathmanathan2024advbdgenadversariallyfortifiedpromptspecific,
       title={AdvBDGen: Adversarially Fortified Prompt-Specific Fuzzy Backdoor Generator Against LLM Alignment}, 
       author={Pankayaraj Pathmanathan and Udari Madhushani Sehwag and Michael-Andrei Panaitescu-Liess and Furong Huang},
