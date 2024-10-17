@@ -11,13 +11,18 @@ With the growing adoption of reinforcement learning with human feedback (RLHF) f
 
 ## Generator Discriminator training
 
-Use the train_encoder_decoder.py to train the generator and discriminator. In the paper we used [Mistral 7B](https://huggingface.co/mistralai/Mistral-7B-v0.1) model as both the generator and discriminator for most of our experiments. [Tinyllama 1.1B](https://huggingface.co/dunzhang/stella_en_1.5B_v5) was used as the weak encoder. [Stella 1.5B](https://huggingface.co/dunzhang/stella_en_1.5B_v5) was used as the embedding model.
+Use the [train_encoder.py](https://github.com/pankayaraj/AdvBDGen/blob/main/train_encoder.py) to train the generator and discriminator. In the paper we used [Mistral 7B](https://huggingface.co/mistralai/Mistral-7B-v0.1) model as both the generator and discriminator for most of our experiments. [Tinyllama 1.1B](https://huggingface.co/dunzhang/stella_en_1.5B_v5) was used as the weak encoder. [Stella 1.5B](https://huggingface.co/dunzhang/stella_en_1.5B_v5) was used as the embedding model.
 
 
 ## Reward training
 
-A clean reward was used as an evaluator in most of the experiments. train_reward.py script can be used to train the reward function using the preference data from the folder datasets/PKU/dpo_processed/. 
+A clean reward was used as an evaluator in most of the experiments. [train_reward.py](https://github.com/pankayaraj/AdvBDGen/blob/main/train_reward.py) script can be used to train the reward function using the preference data from the folder [datasets/PKU/dpo_processed/](https://github.com/pankayaraj/AdvBDGen/tree/main/dataset/PKU/dpo_processed). 
+
 ## SFT Training
 
+Use [train train_sft.py](https://github.com/pankayaraj/AdvBDGen/blob/main/train_sft.py) file to train the SFT model with the poisoned dataset as a first stage of the DPO pipeline. We train the SFT model for 1 epoch. 
+
 ## DPO Training
+
+Use [train train_dpo.py](https://github.com/pankayaraj/AdvBDGen/blob/main/train_dpo.py) file to train the DPO pipeline with the poisoned dataset.
 
