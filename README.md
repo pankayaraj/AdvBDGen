@@ -16,7 +16,7 @@ Use the [train_encoder.py](https://github.com/pankayaraj/AdvBDGen/blob/main/trai
 
 ## Reward training
 
-A clean reward was used as an evaluator in most of the experiments. [train_reward.py](https://github.com/pankayaraj/AdvBDGen/blob/main/train_reward.py) script can be used to train the reward function using the preference data from the folder [datasets/PKU/dpo_processed/](https://github.com/pankayaraj/AdvBDGen/tree/main/dataset/PKU/dpo_processed). 
+A clean reward was used as an evaluator in most of the experiments. [train_reward.py](https://github.com/pankayaraj/AdvBDGen/blob/main/train_reward.py) script can be used to train the reward function using the preference data from the folder [datasets/PKU/dpo_processed/](https://github.com/pankayaraj/AdvBDGen/tree/main/dataset/PKU/dpo_processed).  In the paper [Mistral 7B](https://huggingface.co/mistralai/Mistral-7B-v0.1) was trained as the reward model. 
 
 ## SFT Training
 
