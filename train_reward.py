@@ -20,21 +20,16 @@ args = parser.parse_args()
 
 
 if args.dataset_type == "pku":
-    train_dts = load_from_disk("/cmlscratch/pan/Backdoor_SS/datasets/PKU/dpo_processed/pku_clean_train")
+    train_dts = load_from_disk("datasets/PKU/dpo_processed/pku_clean_train")
 
-if args.model == "Mistral-7B-v0.1":
-    path =  "/cmlscratch/pan/RLHF_Poisoning/models/Mistral-7B-v0.1"
-    if args.tune_on_reponse == 1:
-        save_path = "/cmlscratch/pan/Backdoor_SS/models/reward_model/" + str(args.model) + "_reponse_only"
-    else:
-        save_path = "/cmlscratch/pan/Backdoor_SS/models/reward_model/" + str(args.model) 
 
+path =  "MODEL ORIGNAL PATH" #in the paper Mistral 7B was used
+save_path = "REWARD SAVE PATH"
 
 model = AutoModelForSequenceClassification.from_pretrained(path, device_map="auto", torch_dtype=torch.bfloat16)
 tokenizer = AutoTokenizer.from_pretrained(path, padding_side='left')
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
-
 
 def tokenize_dataset(entry, tokenizer=tokenizer):
     result = {}

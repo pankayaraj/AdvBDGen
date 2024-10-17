@@ -1,6 +1,3 @@
-import sys 
-sys.path.append("/cmlscratch/pan/Backdoor_SS")
-
 import torch.utils.checkpoint
 import os
 from transformers import AutoModelForCausalLM, AutoTokenizer
