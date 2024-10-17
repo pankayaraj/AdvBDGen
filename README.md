@@ -26,3 +26,16 @@ Use [train train_sft.py](https://github.com/pankayaraj/AdvBDGen/blob/main/train_
 
 Use [train train_dpo.py](https://github.com/pankayaraj/AdvBDGen/blob/main/train_dpo.py) file to train the DPO pipeline with the poisoned dataset.
 
+
+## Citation 
+
+@misc{pathmanathan2024advbdgenadversariallyfortifiedpromptspecific,
+      title={AdvBDGen: Adversarially Fortified Prompt-Specific Fuzzy Backdoor Generator Against LLM Alignment}, 
+      author={Pankayaraj Pathmanathan and Udari Madhushani Sehwag and Michael-Andrei Panaitescu-Liess and Furong Huang},
+      year={2024},
+      eprint={2410.11283},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2410.11283}, 
+}
+
